@@ -4,13 +4,33 @@ var GameApp = require('./components/GameApp.react.js');
 var AppDispatcher = require('./dispatcher/AppDispatcher.js');
 var TodoConstants = require('./constants/TodoConstants');
 var GameStore = require('./stores/GameStore');
+var ScreenUtils = require('./ScreenUtils');
 var EventEmitter = require('events').EventEmitter;
+var gameContainer = document.getElementById('sheep-game');
 
-React.render(
-    <GameApp />, document.getElementById('sheep-game')
-);
+React.render(<GameApp />, gameContainer);
 
 (function () {
+    var maintainElementAspectRatio = function () {
+        var physicalAspectRatio = window.innerHeight / window.innerWidth;
+        var newWidth, newHeight;
+
+        if (physicalAspectRatio < ScreenUtils.virtualAspectRatio) {
+            newWidth = window.innerHeight / ScreenUtils.virtualAspectRatio;
+            newHeight = window.innerHeight;
+        } else {
+            newWidth = window.innerWidth;
+            newHeight = window.innerWidth * ScreenUtils.virtualAspectRatio;
+        }
+
+        gameContainer.style.flexBasis = newWidth + "px";
+        gameContainer.style.height = newHeight + "px";
+    };
+
+    maintainElementAspectRatio();
+
+    window.addEventListener("resize", maintainElementAspectRatio);
+
     var onEachFrame;
     if (window.webkitRequestAnimationFrame) {
         onEachFrame = function (cb) {
@@ -41,7 +61,7 @@ React.render(
         });
     });
 
-    window.onresize=function(){
+    window.onresize = function () {
         AppDispatcher.dispatch({
             actionType: TodoConstants.SCREEN_RESIZED,
         });

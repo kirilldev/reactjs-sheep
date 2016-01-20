@@ -20,6 +20,7 @@ var CHANGE_EVENT = 'change';
 
 var _sheep = {};
 var sheepNextId = 0;
+var draggingSheepId = null;
 
 function createSheep(x, y) {
   var id = sheepNextId;
@@ -34,23 +35,25 @@ function createSheep(x, y) {
 
 function draggingSheep (id, phase) {
   if (phase === "start") {
-    _sheep[id].isDragging = true;
+    draggingSheepId = id;
   } else if (phase === "end") {
-    _sheep[id].isDragging = false;
+    draggingSheepId = null;
   }
 }
 
 function updateGameState() {
-  for (var key in _sheep) {
-    if (!_sheep[key].isDragging) {
-      _sheep[key].x = _sheep[key].x - 1.5;
+  for (var id in _sheep) {
 
-      if (_sheep[key].x < 0) {
-        delete _sheep[key]
+    if (_sheep[id].id !== draggingSheepId) {
+      _sheep[id].x = _sheep[id].x - 1.5;
+
+      if (_sheep[id].x < 0) {
+        delete _sheep[id]
       }
     } else {
       var xy = ScreenUtils.toVirtualScreenXY(ControlsUtils.pointerX, ControlsUtils.pointerY);
-      _sheep[key].y = xy.y;
+      _sheep[id].y = xy.y;
+      //_sheep[key].x = xy.x;
     }
   }
 }
@@ -103,7 +106,6 @@ AppDispatcher.register(function(action) {
     case TodoConstants.DRAGGING_SHEEP:
       draggingSheep(action.id, action.phase);
       break;
-
 
     case TodoConstants.TODO_TOGGLE_COMPLETE_ALL:
       if (TodoStore.areAllComplete()) {

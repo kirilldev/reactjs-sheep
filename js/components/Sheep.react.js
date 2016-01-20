@@ -37,9 +37,7 @@ var Sheep = React.createClass({
 
 		return(
 			<div style={{left: position.x + "px", top: position.y + "px"}}
-				 onMouseDown={this._handleDragging.bind(this, "start")}
-				 onMouseUp={this._handleDragging.bind(this, "end")}
-				 className="Sheep"></div>
+				 onMouseDown={this._handleDragging.bind(this, "start")} className="Sheep"></div>
 		)
 	}
 });

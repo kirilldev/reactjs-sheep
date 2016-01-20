@@ -6,6 +6,7 @@ var React = require('react');
 var Sheep = require('./Sheep.react');
 var DebugUtils = require('./DebugUtils.react');
 var GameStore = require('../stores/GameStore');
+var ControlsUtils = require('../utils/ControlsUtils');
 var TodoConstants = require('../constants/TodoConstants');
 var AppDispatcher = require('../dispatcher/AppDispatcher.js');
 
@@ -27,6 +28,13 @@ var GameApp = React.createClass({
 
   componentDidMount: function(){
     GameStore.addChangeListener(this._onChange);
+
+    ControlsUtils.mouseUpCallbacks.push(function(){
+      AppDispatcher.dispatch({
+        actionType: TodoConstants.DRAGGING_SHEEP,
+        phase : "end"
+      });
+    });
 
     AppDispatcher.dispatch({
       actionType: TodoConstants.CREATE_SHEEP,
